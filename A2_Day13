@@ -1,0 +1,17 @@
+A2_Day13
+=========
+
+
+1. #search
+
+2. #nav > ol
+
+3. .header-minicart a[data-target-element='#header-cart']
+
+4. .promos img[alt ^='Travel']
+
+5. .logo img[alt='Madison Island']
+
+6. .category-products > .toolbar > .sorter > .sort-by
+
+7. .bottom .button[title*='Checkout']
