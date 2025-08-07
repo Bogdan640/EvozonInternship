@@ -1,5 +1,6 @@
 
 import com.microsoft.playwright.*;
+import com.microsoft.playwright.options.AriaRole;
 
 public class AutomationTestingProject {
 
@@ -17,7 +18,12 @@ public class AutomationTestingProject {
             //loginTest(playwright);
             //addToWishlistTest(playwright);
 
-            smoketest(playwright);
+            //smoketest(playwright);
+            //registerTest(playwright);
+            //addToWishlistTest(playwright);
+            //newProductListTest(playwright);
+            //addProductToCartTest(playwright);
+            RemoveProductFromCartTest(playwright);
         }
 
 
@@ -69,15 +75,16 @@ public class AutomationTestingProject {
         Locator confirmPasswordInput = page.locator("#confirmation");
         confirmPasswordInput.clear();
         confirmPasswordInput.fill("test1234");
-        Locator registerButton = page.locator("#form-validate > div.buttons-set > button");
+
+
+        Locator registerButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Register") );
         registerButton.click();
 
-        Locator registerButtonLocator = page.locator("#form-validate > div.buttons-set > button");
-        registerButtonLocator.click();
+//        Locator registerButtonLocator = page.locator("#form-validate > div.buttons-set > button");
+//        registerButtonLocator.click();
 
 
         System.out.println("Page title after registration: " + page.title());
-
         browser.close();
     }
 
@@ -125,24 +132,17 @@ public class AutomationTestingProject {
 
         System.out.println("Page title after login: " + page.title());
 
-        Locator saleButton = page.locator("#nav > ol > li.level0.nav-5.parent");
+
+        Locator saleButton = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Sale")).first();
         saleButton.click();
         System.out.println("Page title after sale button click: " + page.title());
 
-        Locator productImage = page.locator("body > div > div > div.main-container.col3-layout > div > div.col-wrapper > div.col-main > div.category-products > ul > li:nth-child(1) > a");
+        Locator productImage = page.locator("a.product-image[title='Jackie O Round Sunglasses']");
         productImage.click();
         System.out.println("Page title after product image click: " + page.title());
 
-        Locator color = page.locator("#swatch18 > span.swatch-label > img");
-        Locator size = page.locator("#swatch79 > span.swatch-label");
-        color.click();
-        size.click();
 
-        Locator quantity = page.locator("#qty");
-        quantity.clear();
-        quantity.fill("5");
-
-        Locator addToWishlistButton = page.locator("#product_addtocart_form > div.product-shop > div.product-options-bottom > ul.add-to-links > li:nth-child(1) > a");
+        Locator addToWishlistButton = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Add to Wishlist"));
         addToWishlistButton.click();
         System.out.println("Page title after add to wishlist button click: " + page.title());
 
@@ -169,8 +169,8 @@ public class AutomationTestingProject {
         Browser browser = initiateBrowser(playwright);
         Page page = browser.newPage();
         page.navigate("http://qa3magento.dev.evozon.com/");
-        Locator newProducts = page.locator("body > div > div > div.main-container.col1-layout > div > div > div.std > div.widget.widget-new-products > div.widget-products > ul > li");
-        int count = newProducts.count();
+        Locator newProducts = page.locator("ul.products-grid.products-grid--max-5-col-widget");
+        int count = newProducts.all().size();
         System.out.println("Number of new products: " + count);
         for (Locator product : newProducts.all()) {
             System.out.println("Product: " + product.textContent());
@@ -184,23 +184,19 @@ public class AutomationTestingProject {
         Page page = browser.newPage();
         page.navigate("http://qa3magento.dev.evozon.com/");
 
-        Locator saleButton = page.locator("#nav > ol > li.level0.nav-5.parent");
+        Locator saleButton = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Sale")).first();
         saleButton.click();
         System.out.println("Page title after sale button click: " + page.title());
 
-        Locator productImage = page.locator("body > div > div > div.main-container.col3-layout > div > div.col-wrapper > div.col-main > div.category-products > ul > li:nth-child(1) > a");
+        Locator productImage = page.locator("a.product-image[title='Jackie O Round Sunglasses']");
         productImage.click();
         System.out.println("Page title after product image click: " + page.title());
 
-        Locator color = page.locator("#swatch18 > span.swatch-label > img");
-        Locator size = page.locator("#swatch79 > span.swatch-label");
-        color.click();
-        size.click();
 
         Locator quantity = page.locator("#qty");
         quantity.clear();
         quantity.fill("5");
-        Locator addToCartButton = page.locator("#product_addtocart_form > div.product-shop > div.product-options-bottom > div.add-to-cart > div.add-to-cart-buttons");
+        Locator addToCartButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Add to Cart"));
         addToCartButton.click();
         System.out.println("Page title after add to cart button click: " + page.title());
         browser.close();
@@ -214,39 +210,32 @@ public class AutomationTestingProject {
         Page page = browser.newPage();
         page.navigate("http://qa3magento.dev.evozon.com/");
 
-        Locator saleButton = page.locator("#nav > ol > li.level0.nav-5.parent");
+        Locator saleButton = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Sale")).first();
         saleButton.click();
         System.out.println("Page title after sale button click: " + page.title());
 
-        Locator productImage = page.locator("body > div > div > div.main-container.col3-layout > div > div.col-wrapper > div.col-main > div.category-products > ul > li:nth-child(1) > a");
+        Locator productImage = page.locator("a.product-image[title='Jackie O Round Sunglasses']");
         productImage.click();
         System.out.println("Page title after product image click: " + page.title());
 
-        Locator color = page.locator("#swatch18 > span.swatch-label > img");
-        Locator size = page.locator("#swatch79 > span.swatch-label");
-        color.click();
-        size.click();
 
         Locator quantity = page.locator("#qty");
         quantity.clear();
         quantity.fill("5");
-        Locator addToCartButton = page.locator("#product_addtocart_form > div.product-shop > div.product-options-bottom > div.add-to-cart > div.add-to-cart-buttons");
+        Locator addToCartButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Add to Cart"));
         addToCartButton.click();
         System.out.println("Page title after add to cart button click: " + page.title());
 
-        // Useful to return maybe the page and browser to a method to use it in other tests
-        /// Ask tomorrow about the best way to handle the browser and page lifecycle
 
         page.navigate("http://qa3magento.dev.evozon.com/");
-        Locator coolStuffButton = page.locator("#nav > ol > li.level0.nav-7.last > a");
+        Locator coolStuffButton = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Cool Stuff"));
         coolStuffButton.click();
         System.out.println("Page title after cool stuff button click: " + page.title());
 
-        Locator addToCartButton2 = page.locator("body > div > div > div.main-container.col3-layout > div > div.col-wrapper > div.col-main > div.category-products > ul > li:nth-child(1) > div > div.actions > button > span > span");
-        addToCartButton2.click();
+        addToCartButton.first().click();
         System.out.println("Page title after add to cart button click: " + page.title());
 
-        Locator removeButton = page.locator("#shopping-cart-table > tbody > tr.last.even > td.a-center.product-cart-remove.last > a");
+        Locator removeButton = page.locator(".first .product-cart-remove a[title='Remove Item']");
         removeButton.click();
         System.out.println("Page title after remove button click: " + page.title());
 
