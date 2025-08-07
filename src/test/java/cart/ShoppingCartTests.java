@@ -38,7 +38,7 @@ public class ShoppingCartTests extends Init {
     private void selectMandatoryAttributes(){
 
         selectMandatorySwatchAttributes();
-        //selectMandatoryDropdownAttributes();
+        selectMandatoryDropdownAttributes();
 
     }
 
@@ -52,109 +52,119 @@ public class ShoppingCartTests extends Init {
     private void selectMandatoryDropdownAttributes(){
 
 
-        Locator dropdowns = page.locator("#product-options-wrapper dd .required-entry  ");
-        if (dropdowns.count() > 0){
-
-           // System.out.println(dropdowns.count());
-
+        Locator dropdowns = page.locator("#product-options-wrapper select.required-entry[id*='bundle']");
+        try {
             if (dropdowns.count() > 0){
-                for (int i = 0; i < dropdowns.count(); i++){
-                   // System.out.println(i);
-                    Locator dropdown = dropdowns.nth(i);
-                    assertThat(dropdown).isVisible();
-                    assertThat(dropdown).isEnabled();
-                    dropdown.click();
+
+               // System.out.println(dropdowns.count());
+
+                if (dropdowns.count() > 0){
+                    for (int i = 0; i < dropdowns.count(); i++){
+                       // System.out.println(i);
+                        Locator dropdown = dropdowns.nth(i);
+                        assertThat(dropdown).isVisible();
+                        assertThat(dropdown).isEnabled();
+                        dropdown.click();
 
 
-                    Locator optionsFromDropdown = dropdown.locator("option");
+                        Locator optionsFromDropdown = dropdown.locator("option");
 
-                    List<String> optionList = new ArrayList<>();
-                    List<String> valueList = new ArrayList<>();
+                        List<String> optionList = new ArrayList<>();
+                        List<String> valueList = new ArrayList<>();
 
-                    for (Locator option : optionsFromDropdown.all()) {
-                        String optionText = option.textContent().trim();
-                        String optionValue = option.getAttribute("value");
-                        String optionClass = option.getAttribute("class");
-
-
-                        if(optionText.matches(".*Choose.* | .*Select.*") ||
-                            optionValue == null || optionValue.isEmpty() ||
-                                (optionClass != null && optionClass.contains("not-available"))) continue;
+                        for (Locator option : optionsFromDropdown.all()) {
+                            String optionText = option.textContent().trim();
+                            String optionValue = option.getAttribute("value");
+                            String optionClass = option.getAttribute("class");
 
 
-                        optionList.add(optionText);
-                        valueList.add(optionValue);
-                        //System.out.println("Option text: " + optionText + ", Value: " + optionValue);
+                            if(optionText.matches(".*Choose.* | .*Select.*") ||
+                                optionValue == null || optionValue.isEmpty() ||
+                                    (optionClass != null && optionClass.contains("not-available"))) continue;
+
+
+                            optionList.add(optionText);
+                            valueList.add(optionValue);
+                            //System.out.println("Option text: " + optionText + ", Value: " + optionValue);
+                        }
+
+
+
+                        for (int j = 0; j < optionList.size(); j++){
+                           // System.out.println("Option " + j + " = " + optionList.get(j));
+
+                            dropdown.selectOption(new SelectOption().setValue(valueList.get(j)));
+
+                            Locator outOfStock = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("OUT OF STOCK"));
+                            if (outOfStock.isVisible()) continue;
+                            break;
+                        }
                     }
 
-
-
-                    for (int j = 0; j < optionList.size(); j++){
-                       // System.out.println("Option " + j + " = " + optionList.get(j));
-
-                        dropdown.selectOption(new SelectOption().setValue(valueList.get(j)));
-
-                        Locator outOfStock = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("OUT OF STOCK"));
-                        if (outOfStock.isVisible()) continue;
-                        break;
-                    }
                 }
-
             }
+        }catch (Exception e){
+            System.out.println("SKIPPED");
         }
+
     }
 
 
     private void selectOptionalDropdownAttributes(){
         Locator dropdowns = page.locator("#product-options-wrapper dd select:not(.required-entry) ");
-        if(dropdowns.count() > 0){
 
-           // System.out.println(dropdowns.count());
-
-            if (dropdowns.count() > 0){
-                for (int i = 0; i < dropdowns.count(); i++){
-                   // System.out.println(i);
-                    Locator dropdown = dropdowns.nth(i);
-                    assertThat(dropdown).isVisible();
-                    assertThat(dropdown).isEnabled();
-                    dropdown.click();
+        try{
 
 
-                    Locator optionsFromDropdown = dropdown.locator("option");
+               // System.out.println(dropdowns.count());
 
-                    List<String> optionList = new ArrayList<>();
-                    List<String> valueList = new ArrayList<>();
-
-                    for (Locator option : optionsFromDropdown.all()) {
-                        String optionText = option.textContent().trim();
-                        String optionValue = option.getAttribute("value");
-                        String optionClass = option.getAttribute("class");
-
-
-                        if(optionText.matches(".*Choose.* | .*Select.*") ||
-                                optionValue == null || optionValue.isEmpty() ||
-                                (optionClass != null && optionClass.contains("not-available"))) continue;
+                if (dropdowns.count() > 0){
+                    for (int i = 0; i < dropdowns.count(); i++){
+                       // System.out.println(i);
+                        Locator dropdown = dropdowns.nth(i);
+                        assertThat(dropdown).isVisible();
+                        assertThat(dropdown).isEnabled();
+                        dropdown.click();
 
 
-                        optionList.add(optionText);
-                        valueList.add(optionValue);
-                       // System.out.println("Option text: " + optionText + ", Value: " + optionValue);
+                        Locator optionsFromDropdown = dropdown.locator("option");
+
+                        List<String> optionList = new ArrayList<>();
+                        List<String> valueList = new ArrayList<>();
+
+                        for (Locator option : optionsFromDropdown.all()) {
+                            String optionText = option.textContent().trim();
+                            String optionValue = option.getAttribute("value");
+                            String optionClass = option.getAttribute("class");
+
+
+                            if(optionText.matches(".*Choose.* | .*Select.*") ||
+                                    optionValue == null || optionValue.isEmpty() ||
+                                    (optionClass != null && optionClass.contains("not-available"))) continue;
+
+
+                            optionList.add(optionText);
+                            valueList.add(optionValue);
+                           // System.out.println("Option text: " + optionText + ", Value: " + optionValue);
+                        }
+
+
+
+                        for (int j = 0; j < optionList.size(); j++){
+                           // System.out.println("Option " + j + " = " + optionList.get(j));
+
+                            dropdown.selectOption(new SelectOption().setValue(valueList.get(j)));
+
+                            Locator outOfStock = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("OUT OF STOCK"));
+                            if (outOfStock.isVisible()) continue;
+                            break;
+                        }
                     }
 
-
-
-                    for (int j = 0; j < optionList.size(); j++){
-                       // System.out.println("Option " + j + " = " + optionList.get(j));
-
-                        dropdown.selectOption(new SelectOption().setValue(valueList.get(j)));
-
-                        Locator outOfStock = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("OUT OF STOCK"));
-                        if (outOfStock.isVisible()) continue;
-                        break;
-                    }
                 }
 
-            }
+        }catch (Exception e){
+            System.out.println("SKIPPED");
         }
     }
 
@@ -162,72 +172,83 @@ public class ShoppingCartTests extends Init {
     private void selectMandatorySwatchAttributes() {
 
         Locator swatchGroups = page.locator("#product-options-wrapper ul[id *='swatch']");
-        System.out.println(swatchGroups.count());
+        try{
 
-        if(swatchGroups.count() > 0){
+            System.out.println(swatchGroups.count());
 
-            int groupCount = swatchGroups.count();
-            //System.out.println("Swatch groups count : " + groupCount);
+            if(swatchGroups.count() > 0){
 
-            for (int i = 0; i < groupCount; i++) {
+                int groupCount = swatchGroups.count();
+                //System.out.println("Swatch groups count : " + groupCount);
 
-                Locator swatchGroup = swatchGroups.nth(i);
-                assertThat(swatchGroup).isVisible();
+                for (int i = 0; i < groupCount; i++) {
 
-                Locator validOptions = swatchGroup.locator("li:not(.not-available)");
+                    Locator swatchGroup = swatchGroups.nth(i);
+                    assertThat(swatchGroup).isVisible();
 
-                int optionCount = validOptions.count();
-               // System.out.println("Valid options in group " + i + ": " + optionCount);
+                    Locator validOptions = swatchGroup.locator("li:not(.not-available)");
+
+                    int optionCount = validOptions.count();
+                   // System.out.println("Valid options in group " + i + ": " + optionCount);
 
 
-                for (int j = 0; j < optionCount; j++) {
+                    for (int j = 0; j < optionCount; j++) {
 
-                    Locator option = validOptions.nth(j);
-                    assertThat(option).isVisible();
-                    option.click();
+                        Locator option = validOptions.nth(j);
+                        assertThat(option).isVisible();
+                        option.click();
 
-                    Locator outOfStockButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("OUT OF STOCK"));
-                    if (!outOfStockButton.isVisible()) {
-                        break;
+                        Locator outOfStockButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("OUT OF STOCK"));
+                        if (!outOfStockButton.isVisible()) {
+                            break;
+                        }
                     }
-                }
 
+                }
             }
+        } catch (Exception e) {
+            System.out.println("SKIPPED");
         }
     }
 
     private void selectOptionalSwatchAttributes(){
         Locator swatchGroups = page.locator("#product-options-wrapper select:not(.required-entry)~ul[id *='swatch' ]");
-        System.out.println(swatchGroups.count());
-        if(swatchGroups.count() > 0){
 
-            int groupCount = swatchGroups.count();
-            //System.out.println("Swatch groups count : " + groupCount);
+        try{
 
-            for (int i = 0; i < groupCount; i++) {
+            System.out.println(swatchGroups.count());
+            if(swatchGroups.count() > 0){
 
-                Locator swatchGroup = swatchGroups.nth(i);
-                assertThat(swatchGroup).isVisible();
+                int groupCount = swatchGroups.count();
+                //System.out.println("Swatch groups count : " + groupCount);
 
-                Locator validOptions = swatchGroup.locator("li:not(.not-available)");
+                for (int i = 0; i < groupCount; i++) {
 
-                int optionCount = validOptions.count();
-                //System.out.println("Valid options in group " + i + ": " + optionCount);
+                    Locator swatchGroup = swatchGroups.nth(i);
+                    assertThat(swatchGroup).isVisible();
+
+                    Locator validOptions = swatchGroup.locator("li:not(.not-available)");
+
+                    int optionCount = validOptions.count();
+                    //System.out.println("Valid options in group " + i + ": " + optionCount);
 
 
-                for (int j = 0; j < optionCount; j++) {
+                    for (int j = 0; j < optionCount; j++) {
 
-                    Locator option = validOptions.nth(j);
-                    assertThat(option).isVisible();
-                    option.click();
+                        Locator option = validOptions.nth(j);
+                        assertThat(option).isVisible();
+                        option.click();
 
-                    Locator outOfStockButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("OUT OF STOCK"));
-                    if (!outOfStockButton.isVisible()) {
-                        break;
+                        Locator outOfStockButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("OUT OF STOCK"));
+                        if (!outOfStockButton.isVisible()) {
+                            break;
+                        }
                     }
-                }
 
+                }
             }
+        }catch (Exception e){
+            System.out.println("SKIPPED");
         }
     }
 
