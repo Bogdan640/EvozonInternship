@@ -20,66 +20,6 @@ public class ShoppingCartTests extends Init {
 
     private static final String HomepageURL = "http://qa3magento.dev.evozon.com/";
 
-    @Test
-    @DisplayName("Should add a product to the cart successfully")
-    void testAddProductToCart() {
-
-        page.navigate(HomepageURL);
-        navigateToJackieOSunglasses();
-        Locator quantity = page.locator("#qty");
-        assertThat(quantity).isVisible();
-        quantity.clear();
-        quantity.fill("5");
-        assertThat(quantity).hasValue("5");
-
-        Locator addToCartButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Add to Cart"));
-        assertThat(addToCartButton).isVisible();
-        assertThat(addToCartButton).isEnabled();
-        addToCartButton.click();
-
-        //System.out.println("Page title after add to cart: " + page.title());
-    }
-
-    @Test
-    @DisplayName("Should remove a product from cart successfully")
-    void testRemoveProductFromCart() {
-
-        page.navigate(HomepageURL);
-
-        // Add first product to cart
-        navigateToJackieOSunglasses();
-
-        Locator quantity = page.locator("#qty");
-        assertThat(quantity).isVisible();
-        quantity.clear();
-        quantity.fill("5");
-
-        Locator addToCartButton = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Add to Cart"));
-        assertThat(addToCartButton).isVisible();
-        addToCartButton.click();
-
-        // Navigate back and add second product
-        page.navigate(HomepageURL);
-        Locator coolStuffButton = page.getByRole(AriaRole.LINK,
-                new Page.GetByRoleOptions().setName("Cool Stuff"));
-        assertThat(coolStuffButton).isVisible();
-        coolStuffButton.click();
-        //System.out.println("Page title after cool stuff button click: " + page.title());
-
-        addToCartButton = page.getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Add to Cart"));
-        assertThat(addToCartButton.first()).isVisible();
-        addToCartButton.first().click();
-       // System.out.println("Page title after add to cart button click: " + page.title());
-
-        // Remove first product from cart
-        Locator removeButton = page.locator(".first .product-cart-remove a[title='Remove Item']");
-        assertThat(removeButton).isVisible();
-        removeButton.click();
-
-       // System.out.println("Page title after remove from cart: " + page.title());
-    }
 
     private void navigateToJackieOSunglasses() {
         Locator saleButton = page.getByRole(AriaRole.LINK,
@@ -98,7 +38,7 @@ public class ShoppingCartTests extends Init {
     private void selectMandatoryAttributes(){
 
         selectMandatorySwatchAttributes();
-        selectMandatoryDropdownAttributes();
+        //selectMandatoryDropdownAttributes();
 
     }
 
@@ -221,7 +161,9 @@ public class ShoppingCartTests extends Init {
 
     private void selectMandatorySwatchAttributes() {
 
-        Locator swatchGroups = page.locator("#product-options-wrapper select:not(.required-entry)~ul[id *='swatch' ]");
+        Locator swatchGroups = page.locator("#product-options-wrapper ul[id *='swatch']");
+        System.out.println(swatchGroups.count());
+
         if(swatchGroups.count() > 0){
 
             int groupCount = swatchGroups.count();
@@ -255,7 +197,8 @@ public class ShoppingCartTests extends Init {
     }
 
     private void selectOptionalSwatchAttributes(){
-        Locator swatchGroups = page.locator("#product-options-wrapper ul[id *='swatch' ]");
+        Locator swatchGroups = page.locator("#product-options-wrapper select:not(.required-entry)~ul[id *='swatch' ]");
+        System.out.println(swatchGroups.count());
         if(swatchGroups.count() > 0){
 
             int groupCount = swatchGroups.count();
@@ -287,4 +230,187 @@ public class ShoppingCartTests extends Init {
             }
         }
     }
+
+
+    /// /////////////////////////////////////////////////
+    /// ////////////////////////
+    /// //////////////////
+
+
+
+    private void setQuantityAndAddToCart(String quantity) {
+        Locator quantityField = page.locator("#qty");
+        if (quantityField.isVisible()) {
+            assertThat(quantityField).isVisible();
+            quantityField.clear();
+            quantityField.fill(quantity);
+            assertThat(quantityField).hasValue(quantity);
+        }
+
+        Locator addToCartButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Add to Cart"));
+        assertThat(addToCartButton).isVisible();
+        assertThat(addToCartButton).isEnabled();
+        addToCartButton.click();
+    }
+
+
+    private void ClickAddToCartButton(){
+        Locator addToCartButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Add to Cart"));
+        assertThat(addToCartButton).isVisible();
+        assertThat(addToCartButton).isEnabled();
+        addToCartButton.click();
+    }
+
+
+    public void addProductToCartByUrl(String productUrl, String quantity) {
+        page.navigate(productUrl);
+        assertThat(page.locator(".product-view")).isVisible();
+
+        selectMandatoryAttributes();
+        //selectOptionalAttributes();
+
+        setQuantityAndAddToCart(quantity);
+    }
+
+    public void addProductToCartByUrl(String productUrl) {
+        page.navigate(productUrl);
+        assertThat(page.locator(".product-view")).isVisible();
+
+        selectMandatoryAttributes();
+        //selectOptionalAttributes();
+
+        ClickAddToCartButton();
+    }
+
+
+
+
+
+    private void searchForProduct(String searchTerm) {
+        Locator searchField = page.locator("#search");
+        assertThat(searchField).isVisible();
+        searchField.clear();
+        searchField.fill(searchTerm);
+        searchField.press("Enter");
+        assertThat(page.locator(".category-products")).isVisible();
+    }
+
+
+
+
+    public void addProductToCartBySearch(String searchTerm, String quantity) {
+
+        page.navigate(HomepageURL);
+        searchForProduct(searchTerm);
+
+        Locator firstProduct = page.locator(".products-grid .item .product-image").first();
+        assertThat(firstProduct).isVisible();
+        firstProduct.click();
+        assertThat(page.locator(".product-view")).isVisible();
+
+        selectMandatoryAttributes();
+        selectOptionalAttributes();
+
+        setQuantityAndAddToCart(quantity);
+    }
+
+    public void addProductToCartBySearch(String searchTerm) {
+
+        page.navigate(HomepageURL);
+        searchForProduct(searchTerm);
+
+        Locator firstProduct = page.locator(".products-grid .item .product-image").first();
+        assertThat(firstProduct).isVisible();
+        firstProduct.click();
+        assertThat(page.locator(".product-view")).isVisible();
+
+        selectMandatoryAttributes();
+        selectOptionalAttributes();
+
+        ClickAddToCartButton();
+    }
+
+
+    private void removeProductFromCart() {
+        Locator removeButton = page.locator(".product-cart-remove a[title='Remove Item']").first();
+        assertThat(removeButton).isVisible();
+        removeButton.click();
+    }
+
+
+
+
+    private void verifyProductAddedToCart() {
+        Locator successMessage = page.locator(".success-msg");
+        assertThat(successMessage).isVisible();
+    }
+
+
+    private void verifyProductRemovedFromCart() {
+        Locator removalMessage = page.locator(".success-msg");
+        assertThat(removalMessage).isVisible();
+    }
+
+
+
+
+    ///
+    ///  TESTS
+    ///
+
+    @Test
+    @DisplayName("Should add a product to cart by URL")
+    void testAddProductToCartByUrl() {
+        String productUrl = "http://qa3magento.dev.evozon.com/jackie-o-round-sunglasses.html";
+        addProductToCartByUrl(productUrl, "2");
+        verifyProductAddedToCart();
+    }
+
+    @Test
+    @DisplayName("Should add a product to cart by search")
+    void testAddProductToCartBySearch() {
+        addProductToCartBySearch("Jackie O Round Sunglasses", "3");
+        verifyProductAddedToCart();
+    }
+
+    @Test
+    @DisplayName("Should add a product to the cart successfully")
+    void testAddProductToCart() {
+        page.navigate(HomepageURL);
+        navigateToJackieOSunglasses();
+
+        setQuantityAndAddToCart("5");
+        verifyProductAddedToCart();
+    }
+
+    @Test
+    @DisplayName("Should remove a product from cart successfully")
+    void testRemoveProductFromCart() {
+        page.navigate(HomepageURL);
+        navigateToJackieOSunglasses();
+        setQuantityAndAddToCart("5");
+        removeProductFromCart();
+
+    }
+
+    @Test
+    @DisplayName("Should remove a product from cart successfully and display a confirmation message")
+    void testRemoveMessageProductFromCart() {
+        page.navigate(HomepageURL);
+        navigateToJackieOSunglasses();
+        setQuantityAndAddToCart("5");
+        removeProductFromCart();
+        verifyProductRemovedFromCart();
+    }
+
+    @Test
+    @DisplayName("Should handle products with mandatory attributes")
+    void testAddProductWithMandatoryAttributes() {
+        String productWithAttributesUrl = "http://qa3magento.dev.evozon.com/elizabeth-knit-top-601.html";
+        addProductToCartByUrl(productWithAttributesUrl);
+        verifyProductAddedToCart();
+    }
+
+
+
 }
