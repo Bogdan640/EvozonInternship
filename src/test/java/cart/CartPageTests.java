@@ -5,6 +5,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import init.BaseTest;
 import pages.ProductListingPage;
+import utils.CsvReader;
+
+import java.util.List;
+import java.util.Map;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -45,5 +49,20 @@ public class CartPageTests extends BaseTest {
         cartPage = productPage.addToCart("5");
         cartPage.removeFirstItemFromCart();
         assertThat(page.locator(".success-msg")).isVisible();
+    }
+
+
+    @Test
+    @DisplayName("Should add multiple products to cart from CSV")
+    void testAddMultipleProductsToCart() {
+        String filePath = "src/test/resources/testdata/products.csv";
+        List<Map<String, String>> products = CsvReader.readCsvFileAsMap(filePath);
+
+        for (Map<String, String> product : products) {
+            productPage.navigateToProductPage(product.get("productUrl"));
+            cartPage = productPage.addToCart(product.get("quantity"));
+
+            assertThat(page.locator(".success-msg")).isVisible();
+        }
     }
 }
